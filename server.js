@@ -1,8 +1,8 @@
 const express = require('express');
 const path= require('path');
 const { v4: uuidv4 } = require('uuid');
-const server = require('http').Server(express);
-const io = require('socket.io')(server);
+const http = require('http').Server(express);
+const io = require('socket.io')(http);
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -27,13 +27,14 @@ app.get('/:room', (req, res) => {
 })
 
 
-io.on('connection', socket => {
-    socket.on('join-room', () => {
-        console.log('Socketio Joined Room');
+io.on('connection', (socket) => {
+    socket.on('join-room', (roomId) => {
+        socket.join(roomId);
+        socket.to(roomId).broadcast.emit('user-connected');
+        console.log('Server joined room');
     })
 })
 
-//io.listen(port);
 
 
 app.listen(port, () => {
