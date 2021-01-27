@@ -1,7 +1,7 @@
 const express = require('express');
 const path= require('path');
 const { v4: uuidv4 } = require('uuid');
-
+const server = require('http').Server(express);
 const io = require('socket.io')(server);
 
 const app = express();
@@ -25,6 +25,15 @@ app.get('/login', (req, res) => {
 app.get('/:room', (req, res) => {
     res.render('room', {roomId: req.params.room});
 })
+
+
+io.on('connection', socket => {
+    socket.on('join-room', () => {
+        console.log('Socketio Joined Room');
+    })
+})
+
+//io.listen(port);
 
 
 app.listen(port, () => {
